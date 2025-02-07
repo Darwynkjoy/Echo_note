@@ -14,7 +14,7 @@ class Textinputpage extends StatelessWidget{
           Navigator.pop(context);
         }, icon: Icon(Icons.arrow_back,color: Colors.white,)),
         actions: [
-          IconButton(onPressed: (){}, icon: Icon(Icons.topic,color: Colors.white,))
+          IconButton(onPressed: (){}, icon: Icon(Icons.check,color: Colors.white,))
         ],
       ),
       body: Padding(
