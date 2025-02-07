@@ -43,7 +43,7 @@ class Textinputpage extends StatelessWidget{
               width: double.infinity,
               child: TextField(
                 decoration: InputDecoration(
-
+                  //not in selection
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(4),
                     borderSide: BorderSide(width: 2,color: Colors.grey,style: BorderStyle.solid)
