@@ -1,6 +1,9 @@
 import 'dart:math';
-
-import 'package:echo_note/textpage.dart';
+import 'package:echo_note/appwrite.dart';
+import 'package:echo_note/editnotepage.dart';
+import 'package:echo_note/note_data.dart';
+import 'package:echo_note/addnotepage.dart';
+import 'package:echo_note/notepage.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget{
@@ -8,6 +11,9 @@ class HomePage extends StatefulWidget{
   State<HomePage> createState()=> _homepageState();
 }
 class _homepageState extends State<HomePage>{
+
+  TextEditingController titleContoller=TextEditingController();
+  TextEditingController contentContoller=TextEditingController();
 
 static Color randomColor(){
     List<Color> colors=[
@@ -21,7 +27,37 @@ static Color randomColor(){
     ];
     return colors[Random().nextInt(colors.length)];
   }
+  late AppwriteService _appwriteService;
+  late List<notesData> _notes;
 
+  @override
+  void initState(){
+    super.initState();
+    _appwriteService=AppwriteService();
+    _notes=[];
+    _loadNotesDetails();
+  }
+
+  Future <void> _loadNotesDetails()async{
+    try{
+      final task=await _appwriteService.getNoteDetails();
+      setState(() {
+        _notes=task.map((e)=> notesData.fromDocument(e)).toList();
+      });
+    }catch(e){
+      print("error loading task: $e");
+    }
+  }
+
+
+  Future<void> _deleteNoteDetatils(String taskId)async{
+    try{
+      await _appwriteService.deleteNote(taskId);
+      _loadNotesDetails();
+    }catch(e){
+      print("error deleting task:$e");
+    }
+  }
 
   @override
   Widget build(BuildContext context){
@@ -34,29 +70,31 @@ static Color randomColor(){
           unselectedLabelColor: Colors.black,//unselected tab color
           labelColor: Colors.white,// selected tab color
           tabs: [
-            Text("Text",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold),selectionColor: Colors.amber,),
+            Text("Notes",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold),selectionColor: Colors.amber,),
             Text("List",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold),),
             Text("Task",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold),),
           ]),
       ),
 
       body: TabBarView(children: [
-        textScreen(),
+        noteScreen(),
         listScreen(),
         Text("task")
       ]),
 
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color.fromARGB(255, 8, 179, 16),
-        onPressed: (){},
+        onPressed: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>AddNotepage()));
+        },
       child: Icon(Icons.add,color: Colors.black,size: 30,)),
 
     ),
     );
   }
 
-  //text screen 
-   Widget textScreen(){
+  //note screen 
+   Widget noteScreen(){
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GridView.builder(
@@ -66,11 +104,12 @@ static Color randomColor(){
               crossAxisSpacing: 10, 
               childAspectRatio: 2,
             ),
-            itemCount: 10,
+            itemCount: _notes.length,
             itemBuilder: (context, index) {
+              final note=_notes[index];
               return GestureDetector(
                 onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Textpage()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Notepage(id: note.id, title: note.title, content: note.content)));
                 },
                 child: Container(
                   padding: EdgeInsets.all(10),
@@ -79,16 +118,35 @@ static Color randomColor(){
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("Title",style: TextStyle(fontSize: 20,color: Colors.black,fontWeight: FontWeight.bold),),
-                          Icon(Icons.more_vert,color: Colors.black,)
+                          Text("${note.title}",style: TextStyle(fontSize: 20,color: Colors.black,fontWeight: FontWeight.bold),),
+                          //popupmenu for edit and delete
+                          PopupMenuButton(
+                            onSelected: (value){
+                              if(value == 'edit'){
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>Editnotepage(id: note.id, title: note.title, content: note.content)));
+                              }else{
+                                _deleteNoteDetatils(note.id);
+                              }
+                            },
+                            itemBuilder: (BuildContext context){
+                              return {'edit','delete'}.map((String choice){
+                                return PopupMenuItem<String>(
+                                  value: choice,
+                                  child: Text(choice),
+                                  );
+                              }).toList();
+                            },
+                            icon: Icon(Icons.more_vert),
+                            ),
                         ],
                       ),
-                
-                      Text("aefbwerwegitcitotxiyrtxiyrxiyrxirfxiyrxiyfrx",overflow: TextOverflow.ellipsis,maxLines: 3,)
+
+                      Text("${note.content}",overflow: TextOverflow.ellipsis,maxLines: 3,)
                     ],
                   )
                 ),

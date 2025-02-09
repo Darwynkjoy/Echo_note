@@ -1,20 +1,65 @@
-import 'dart:math';
-
+import 'package:echo_note/appwrite.dart';
+import 'package:echo_note/homepage.dart';
+import 'package:echo_note/note_data.dart';
 import 'package:flutter/material.dart';
 
-class Textinputpage extends StatelessWidget{
-  const Textinputpage({super.key});
+class AddNotepage extends StatefulWidget{
   @override
+  State<AddNotepage> createState()=> _addnoteState();
+}
+
+class _addnoteState extends State<AddNotepage>{
+
+    TextEditingController titleContoller=TextEditingController();
+    TextEditingController contentContoller=TextEditingController();
+
+    late AppwriteService _appwriteService;
+    late List<notesData> _notes;
+
+  @override
+  void initState(){
+    super.initState;
+    _appwriteService=AppwriteService();
+    _notes=[];
+    _loadNotesDetails();
+  }
+
+    Future <void> _loadNotesDetails()async{
+    try{
+      final task=await _appwriteService.getNoteDetails();
+      setState(() {
+        _notes=task.map((e)=> notesData.fromDocument(e)).toList();
+      });
+    }catch(e){
+      print("error loading task: $e");
+    }
+  }
+
+    Future<void>_addNotes()async{
+    final title=titleContoller.text;
+    final content=contentContoller.text;
+    try{
+      await _appwriteService.addNote(title,content);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage()));
+    }catch(e){
+      print(e){
+        print("error adding note:$e");
+      }
+    }
+  }
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 8, 179, 16),
-        title: Text("title",style: TextStyle(fontSize: 25,color: Colors.white,fontWeight: FontWeight.bold),),
+        title: Text("Add new note",style: TextStyle(fontSize: 25,color: Colors.white,fontWeight: FontWeight.bold),),
+        centerTitle: false,
         leading: IconButton(onPressed: (){
           Navigator.pop(context);
         }, icon: Icon(Icons.arrow_back,color: Colors.white,)),
         actions: [
-          IconButton(onPressed: (){}, icon: Icon(Icons.check,color: Colors.white,))
+          IconButton(onPressed: (){
+            _addNotes();
+          }, icon: Icon(Icons.check,color: Colors.white,))
         ],
       ),
       body: Padding(
@@ -23,6 +68,7 @@ class Textinputpage extends StatelessWidget{
           children: [
             //title text feild
             TextField(
+              controller: titleContoller,
               decoration: InputDecoration(
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(4),
@@ -42,6 +88,7 @@ class Textinputpage extends StatelessWidget{
               height: 590,
               width: double.infinity,
               child: TextField(
+                controller: contentContoller,
                 decoration: InputDecoration(
                   //not in selection
                   enabledBorder: OutlineInputBorder(
