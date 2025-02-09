@@ -28,11 +28,16 @@ class _editnoteState extends State<Editnotepage>{
   Future<void> _updateNote() async {
     final title = titleContoller.text.trim();
     final content = contentContoller.text.trim();
+
+    if(title.isEmpty || content.isEmpty){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Title and content should not be empty"),backgroundColor: Colors.red,));
+    }else{
     try {
       await _appwriteService.updateNote(widget.id, title, content);
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Notepage(id: widget.id, title: title, content: content)));
     } catch (e) {
       print("Error updating note: $e");
+    }
     }
   }
 

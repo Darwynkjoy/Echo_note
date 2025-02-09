@@ -38,6 +38,9 @@ class _addnoteState extends State<AddNotepage>{
     Future<void>_addNotes()async{
     final title=titleContoller.text;
     final content=contentContoller.text;
+    if(title.isEmpty || content.isEmpty){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Title and content should not be empty"),backgroundColor: Colors.red,));
+    }else{
     try{
       await _appwriteService.addNote(title,content);
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage()));
@@ -45,6 +48,7 @@ class _addnoteState extends State<AddNotepage>{
       print(e){
         print("error adding note:$e");
       }
+    }
     }
   }
   Widget build(BuildContext context){
