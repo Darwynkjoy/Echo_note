@@ -2,16 +2,16 @@ import 'package:echo_note/appwrite.dart';
 import 'package:echo_note/notepage.dart';
 import 'package:flutter/material.dart';
 
-class Editnotepage extends StatefulWidget{
+class Edittextpage extends StatefulWidget{
   @override
   final String id;
   final String title;
   final String content;
-  const Editnotepage({super.key,required this.id,required this.title,required this.content});
-  State<Editnotepage> createState()=> _editnoteState();
+  const Edittextpage({super.key,required this.id,required this.title,required this.content});
+  State<Edittextpage> createState()=> _edittextState();
 }
 
-class _editnoteState extends State<Editnotepage>{
+class _edittextState extends State<Edittextpage>{
 
   late  TextEditingController titleContoller=TextEditingController();
   late  TextEditingController contentContoller=TextEditingController();
@@ -25,7 +25,7 @@ class _editnoteState extends State<Editnotepage>{
     contentContoller = TextEditingController(text: widget.content);
   }
 
-  Future<void> _updateNote() async {
+  Future<void> _updateText() async {
     final title = titleContoller.text.trim();
     final content = contentContoller.text.trim();
 
@@ -33,8 +33,8 @@ class _editnoteState extends State<Editnotepage>{
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Title and content should not be empty"),backgroundColor: Colors.red,));
     }else{
     try {
-      await _appwriteService.updateNote(widget.id, title, content);
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Notepage(id: widget.id, title: title, content: content)));
+      await _appwriteService.updateText(widget.id, title, content);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Textpage(id: widget.id, title: title, content: content)));
     } catch (e) {
       print("Error updating note: $e");
     }
@@ -47,14 +47,14 @@ class _editnoteState extends State<Editnotepage>{
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 8, 179, 16),
-        title: Text("Edit note",style: TextStyle(fontSize: 25,color: Colors.white,fontWeight: FontWeight.bold),),
+        title: Text("Edit Text",style: TextStyle(fontSize: 25,color: Colors.white,fontWeight: FontWeight.bold),),
         centerTitle: false,
         leading: IconButton(onPressed: (){
           Navigator.pop(context);
         }, icon: Icon(Icons.arrow_back,color: Colors.white,)),
         actions: [
           IconButton(onPressed: (){
-            _updateNote();
+            _updateText();
           }, icon: Icon(Icons.check,color: Colors.white,))
         ],
       ),

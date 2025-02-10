@@ -1,26 +1,23 @@
-
 import 'package:echo_note/appwrite.dart';
 import 'package:echo_note/editnotepage.dart';
 import 'package:echo_note/homepage.dart';
-import 'package:echo_note/note_data.dart';
 import 'package:flutter/material.dart';
 
-class Notepage extends StatefulWidget{
+class Textpage extends StatefulWidget{
   @override
   final String id;
   final String title;
   final String content;
-  const Notepage({super.key,required this.id,required this.title,required this.content});
-  State<Notepage> createState()=> _notepageState();
+  const Textpage({super.key,required this.id,required this.title,required this.content});
+  State<Textpage> createState()=> _textpageState();
 }
-class _notepageState extends State<Notepage>{
+class _textpageState extends State<Textpage>{
 
   late AppwriteService _appwriteService=AppwriteService();
-  late List<notesData> _notes;
 
-  Future<void> _deleteNoteDetatils(String taskId)async{
+  Future<void> _deleteTextDetatils(String taskId)async{
     try{
-      await _appwriteService.deleteNote(taskId);
+      await _appwriteService.deleteText(taskId);
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage()));
     }catch(e){
       print("error deleting task:$e");
@@ -36,10 +33,10 @@ class _notepageState extends State<Notepage>{
         }, icon: Icon(Icons.arrow_back,color: Colors.white,)),
         actions: [
           IconButton(onPressed: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>Editnotepage(id: widget.id, title: widget.title, content: widget.content)));
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>Edittextpage(id: widget.id, title: widget.title, content: widget.content)));
           }, icon: Icon(Icons.edit,color: Colors.white,)),
           IconButton(onPressed: (){
-            _deleteNoteDetatils(widget.id);
+            _deleteTextDetatils(widget.id);
           }, icon: Icon(Icons.delete,color: Colors.white,)),
         ],
       ),

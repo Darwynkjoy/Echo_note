@@ -17,17 +17,17 @@ class AppwriteService {
     databases=Databases(client);
   }
 
-  Future<List<Document>> getNoteDetails()async{
+  Future<List<Document>> getTextDetails()async{
     try{
       final result=await databases.listDocuments(databaseId: databasesId, collectionId: collectionId);
       return result.documents;
     }catch(e){
-      print("error loading note:$e");
+      print("error loading text:$e");
       rethrow;
     }
   }
 
-  Future<Document> addNote(String title,String content)async{
+  Future<Document> addText(String title,String content)async{
     try{
       final DocumentId=ID.unique();
       final result=await databases.createDocument(
@@ -40,12 +40,12 @@ class AppwriteService {
         });
         return result;
     }catch(e){
-      print("error creating note:$e");
+      print("error creating text:$e");
       rethrow;
     }
   }
 
-  Future<Document> updateNote(String documentId,String title,String content)async{
+  Future<Document> updateText(String documentId,String title,String content)async{
   try{
     final result= await databases.updateDocument(
       collectionId:collectionId,
@@ -58,12 +58,12 @@ class AppwriteService {
     );
     return result;
   }catch(e){
-    print("error updating note:$e");
+    print("error updating text:$e");
     rethrow;
   }
 }
 
-  Future<void> deleteNote(String documentId)async{
+  Future<void> deleteText(String documentId)async{
     try{
       await databases.deleteDocument(
         databaseId: databasesId,
@@ -71,7 +71,7 @@ class AppwriteService {
         documentId: documentId
         );
     }catch(e){
-      print("error updating note:$e");
+      print("error updating text:$e");
       rethrow;
     }
   }

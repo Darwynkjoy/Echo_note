@@ -24,25 +24,26 @@ static Color randomColor(){
       Color.fromRGBO(145, 201, 196, 1),
       Color.fromRGBO(239, 135, 170, 1),
       Color.fromRGBO(186, 252, 235, 1),
+      const Color.fromARGB(255, 183, 139, 212)
     ];
     return colors[Random().nextInt(colors.length)];
   }
   late AppwriteService _appwriteService;
-  late List<notesData> _notes;
+  late List<notesData> _texts;
 
   @override
   void initState(){
     super.initState();
     _appwriteService=AppwriteService();
-    _notes=[];
-    _loadNotesDetails();
+    _texts=[];
+    _loadTextDetails();
   }
 
-  Future <void> _loadNotesDetails()async{
+  Future <void> _loadTextDetails()async{
     try{
-      final task=await _appwriteService.getNoteDetails();
+      final task=await _appwriteService.getTextDetails();
       setState(() {
-        _notes=task.map((e)=> notesData.fromDocument(e)).toList();
+        _texts=task.map((e)=> notesData.fromDocument(e)).toList();
       });
     }catch(e){
       print("error loading task: $e");
@@ -50,10 +51,10 @@ static Color randomColor(){
   }
 
 
-  Future<void> _deleteNoteDetatils(String taskId)async{
+  Future<void> _deleteTextDetatils(String taskId)async{
     try{
-      await _appwriteService.deleteNote(taskId);
-      _loadNotesDetails();
+      await _appwriteService.deleteText(taskId);
+      _loadTextDetails();
     }catch(e){
       print("error deleting task:$e");
     }
@@ -70,14 +71,14 @@ static Color randomColor(){
           unselectedLabelColor: Colors.black,//unselected tab color
           labelColor: Colors.white,// selected tab color
           tabs: [
-            Text("Notes",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold),selectionColor: Colors.amber,),
+            Text("Texts",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold),selectionColor: Colors.amber,),
             Text("List",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold),),
             Text("Task",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold),),
           ]),
       ),
 
       body: TabBarView(children: [
-        noteScreen(),
+        TextScreen(),
         listScreen(),
         Text("task")
       ]),
@@ -85,7 +86,7 @@ static Color randomColor(){
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color.fromARGB(255, 8, 179, 16),
         onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>AddNotepage()));
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>Addtextpage()));
         },
       child: Icon(Icons.add,color: Colors.black,size: 30,)),
 
@@ -94,7 +95,7 @@ static Color randomColor(){
   }
 
   //note screen 
-   Widget noteScreen(){
+   Widget TextScreen(){
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GridView.builder(
@@ -104,12 +105,12 @@ static Color randomColor(){
               crossAxisSpacing: 10, 
               childAspectRatio: 2,
             ),
-            itemCount: _notes.length,
+            itemCount: _texts.length,
             itemBuilder: (context, index) {
-              final note=_notes[index];
+              final text=_texts[index];
               return GestureDetector(
                 onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Notepage(id: note.id, title: note.title, content: note.content)));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Textpage(id: text.id, title: text.title, content: text.content)));
                 },
                 child: Container(
                   padding: EdgeInsets.all(10),
@@ -123,18 +124,18 @@ static Color randomColor(){
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("${note.title}",style: TextStyle(fontSize: 20,color: Colors.black,fontWeight: FontWeight.bold),),
+                          Text("${text.title}",style: TextStyle(fontSize: 20,color: Colors.black,fontWeight: FontWeight.bold),),
                           //popupmenu for edit and delete
                           PopupMenuButton(
                             onSelected: (value){
-                              if(value == 'edit'){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>Editnotepage(id: note.id, title: note.title, content: note.content)));
+                              if(value == 'Edit'){
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>Edittextpage(id: text.id, title: text.title, content: text.content)));
                               }else{
-                                _deleteNoteDetatils(note.id);
+                                _deleteTextDetatils(text.id);
                               }
                             },
                             itemBuilder: (BuildContext context){
-                              return {'edit','delete'}.map((String choice){
+                              return {'Edit','Delete'}.map((String choice){
                                 return PopupMenuItem<String>(
                                   value: choice,
                                   child: Text(choice),
@@ -146,7 +147,7 @@ static Color randomColor(){
                         ],
                       ),
 
-                      Text("${note.content}",overflow: TextOverflow.ellipsis,maxLines: 3,)
+                      Text("${text.content}",overflow: TextOverflow.ellipsis,maxLines: 3,)
                     ],
                   )
                 ),
