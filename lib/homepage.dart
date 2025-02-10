@@ -24,7 +24,8 @@ static Color randomColor(){
       Color.fromRGBO(145, 201, 196, 1),
       Color.fromRGBO(239, 135, 170, 1),
       Color.fromRGBO(186, 252, 235, 1),
-      const Color.fromARGB(255, 183, 139, 212)
+      Color.fromARGB(255, 183, 139, 212),
+      Color.fromRGBO(253, 99, 99, 1),
     ];
     return colors[Random().nextInt(colors.length)];
   }
@@ -79,8 +80,8 @@ static Color randomColor(){
 
       body: TabBarView(children: [
         TextScreen(),
-        listScreen(),
-        Text("task")
+        Text("list"),
+        TaskScreen(),
       ]),
 
       floatingActionButton: FloatingActionButton(
@@ -102,8 +103,8 @@ static Color randomColor(){
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               mainAxisSpacing: 10,
-              crossAxisSpacing: 10, 
-              childAspectRatio: 2,
+              crossAxisSpacing: 10,
+              childAspectRatio: 1.2
             ),
             itemCount: _texts.length,
             itemBuilder: (context, index) {
@@ -120,6 +121,7 @@ static Color randomColor(){
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -146,8 +148,8 @@ static Color randomColor(){
                             ),
                         ],
                       ),
-
-                      Text("${text.content}",overflow: TextOverflow.ellipsis,maxLines: 3,)
+                
+                      Text("${text.content}",style: TextStyle(fontSize: 16),overflow: TextOverflow.visible,)
                     ],
                   )
                 ),
@@ -157,7 +159,17 @@ static Color randomColor(){
     );
   
   }
-  Widget listScreen(){
+
+  double _height=2;
+  Color _colors=Colors.red;
+  void _animateContainer(){
+    setState(() {
+      _height=_height == 2 ? 1 :2;
+
+    });
+  }
+  //task screen
+  Widget TaskScreen(){
      return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GridView.builder(
@@ -165,27 +177,34 @@ static Color randomColor(){
               crossAxisCount: 2,
               mainAxisSpacing: 10,
               crossAxisSpacing: 10, 
-              childAspectRatio: 2,
             ),
-            itemCount: 20,
+            itemCount: 10,
             itemBuilder: (context, index) {
-              return Container(
+              return AnimatedContainer(
+                height: _height,
+                duration: Duration(seconds: 5),
+                curve: Curves.decelerate,
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: randomColor(),
+                  color: _colors,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text("Title",style: TextStyle(fontSize: 20,color: Colors.black,fontWeight: FontWeight.bold),),
-                        Icon(Icons.more_vert,color: Colors.black,)
+                        GestureDetector(
+                          onTap: _animateContainer,
+                          child: Icon(Icons.arrow_back_ios_new,color: Colors.black,))
                       ],
                     ),
 
-                    Text("aefbwerwegitcitotxiyrtxiyrxiyrxirfxiyrxiyfrx",overflow: TextOverflow.ellipsis,maxLines: 3,)
+                    Text("06-07-25",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
+                    Text("2:23",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
+
                   ],
                 )
               );
