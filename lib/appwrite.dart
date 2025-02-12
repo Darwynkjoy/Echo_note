@@ -110,6 +110,26 @@ class AppwriteService {
     }
   }
 
+  Future<Document> updateTask(String documentId,String title,String description,String date,String time)async{
+  try{
+    final result= await databases.updateDocument(
+      collectionId: taskcollectionId,
+      databaseId: databasesId,
+      documentId: documentId,
+      data:{
+       "title":title,
+       "description":description,
+       "date":date,
+       "time":time,
+      },
+    );
+    return result;
+  }catch(e){
+    print("error updating task:$e");
+    rethrow;
+  }
+}
+
   Future<void> deleteTask(String documentId)async{
     try{
       await databases.deleteDocument(

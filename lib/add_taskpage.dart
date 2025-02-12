@@ -147,7 +147,7 @@ class _addtaskState extends State<Addtaskpage>{
                 TextButton(onPressed: (){
                   _selectedDate(context);
                 },
-                child: Text(selectedDate != null? "${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}":"${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}",style: TextStyle(fontSize: 20,color: const Color.fromARGB(255, 8, 179, 16),),),)
+                child: Text(selectedDate != null? "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}":"${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}",style: TextStyle(fontSize: 20,color: const Color.fromARGB(255, 8, 179, 16),),),)
               ],
             )
           ],
