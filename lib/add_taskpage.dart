@@ -1,53 +1,73 @@
 import 'package:echo_note/appwrite.dart';
+import 'package:echo_note/data.dart';
 import 'package:echo_note/homepage.dart';
-import 'package:echo_note/note_data.dart';
 import 'package:flutter/material.dart';
 
-class Addtextpage extends StatefulWidget{
+class Addtaskpage extends StatefulWidget{
   @override
-  State<Addtextpage> createState()=> _addtextState();
+  State<Addtaskpage> createState()=> _addtaskState();
 }
 
-class _addtextState extends State<Addtextpage>{
+class _addtaskState extends State<Addtaskpage>{
 
     TextEditingController titleContoller=TextEditingController();
-    TextEditingController contentContoller=TextEditingController();
+    TextEditingController descriptionController=TextEditingController();
+
+    DateTime? selectedDate;
+    late TimeOfDay selectedtime=TimeOfDay.now();
 
     late AppwriteService _appwriteService;
-    late List<notesData> _texts;
+    late List<tasksData> _tasks;
+
+    Future <void> _selectedDate(BuildContext context)async{
+      final DateTime? picked=await showDatePicker(context: context, initialDate: DateTime.now(),firstDate: DateTime(1990), lastDate: DateTime(2100));
+      if( picked != null && picked != selectedDate){
+        setState(() {
+          selectedDate=picked;
+        });
+      }
+    }
+
+    Future<void> _selectedTime(BuildContext context)async{
+      final TimeOfDay? picked=
+      await showTimePicker(context: context, initialTime: selectedtime);
+      if(picked != null && picked != selectedtime){
+        setState(() {
+          selectedtime=picked;
+        });
+      }
+    }
 
   @override
   void initState(){
     super.initState;
     _appwriteService=AppwriteService();
-    _texts=[];
-    _loadTextDetails();
+    _tasks=[];
+    _loadTaskDetails();
   }
 
-    Future <void> _loadTextDetails()async{
+    Future <void> _loadTaskDetails()async{
     try{
-      final task=await _appwriteService.getTextDetails();
+      final taskBox=await _appwriteService.getTaskDetails();
       setState(() {
-        _texts=task.map((e)=> notesData.fromDocument(e)).toList();
+        _tasks=taskBox.map((e)=> tasksData.fromDocument(e)).toList();
       });
     }catch(e){
       print("error loading task: $e");
     }
   }
 
-    Future<void>_addText()async{
+    Future<void>_addTask()async{
     final title=titleContoller.text;
-    final content=contentContoller.text;
+    final content=descriptionController.text;
     if(title.isEmpty || content.isEmpty){
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Title and content should not be empty"),backgroundColor: Colors.red,));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Title and Description should not be empty"),backgroundColor: Colors.red,));
     }else{
     try{
       await _appwriteService.addText(title,content);
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage()));
     }catch(e){
-      print(e){
         print("error adding note:$e");
-      }
     }
     }
   }
@@ -55,14 +75,14 @@ class _addtextState extends State<Addtextpage>{
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 8, 179, 16),
-        title: Text("Add New Text",style: TextStyle(fontSize: 25,color: Colors.white,fontWeight: FontWeight.bold),),
+        title: Text("Add New Task",style: TextStyle(fontSize: 25,color: Colors.white,fontWeight: FontWeight.bold),),
         centerTitle: false,
         leading: IconButton(onPressed: (){
           Navigator.pop(context);
         }, icon: Icon(Icons.arrow_back,color: Colors.white,)),
         actions: [
           IconButton(onPressed: (){
-            _addText();
+            _addTask();
           }, icon: Icon(Icons.check,color: Colors.white,))
         ],
       ),
@@ -87,12 +107,12 @@ class _addtextState extends State<Addtextpage>{
                 ),
             ),
             SizedBox(height: 10,),
-            //content textfeild
+            //description textfeild
             SizedBox(
               height: 590,
               width: double.infinity,
               child: TextField(
-                controller: contentContoller,
+                controller: descriptionController,
                 decoration: InputDecoration(
                   //not in selection
                   enabledBorder: OutlineInputBorder(
@@ -104,7 +124,7 @@ class _addtextState extends State<Addtextpage>{
                     borderRadius: BorderRadius.circular(4),
                     borderSide: BorderSide(width: 2,color: const Color.fromARGB(255, 8, 179, 16),style: BorderStyle.solid)
                    ),
-                  labelText: "Content",
+                  labelText: "Description",
                   labelStyle: TextStyle(color: const Color.fromARGB(255, 8, 179, 16),),
                   floatingLabelAlignment: FloatingLabelAlignment.start,
                   alignLabelWithHint: true,
@@ -114,6 +134,19 @@ class _addtextState extends State<Addtextpage>{
                   expands: true,
                   
               ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(onPressed: (){
+                  _selectedTime(context);
+                },
+                child: Text("${selectedtime.format(context)}",style: TextStyle(fontSize: 20,color: const Color.fromARGB(255, 8, 179, 16),),),),
+                TextButton(onPressed: (){
+                  _selectedDate(context);
+                },
+                child: Text(selectedDate != null? "${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}":"${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}",style: TextStyle(fontSize: 20,color: const Color.fromARGB(255, 8, 179, 16),),),)
+              ],
             )
           ],
         ),

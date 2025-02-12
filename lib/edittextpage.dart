@@ -1,5 +1,5 @@
 import 'package:echo_note/appwrite.dart';
-import 'package:echo_note/notepage.dart';
+import 'package:echo_note/textpage.dart';
 import 'package:flutter/material.dart';
 
 class Edittextpage extends StatefulWidget{

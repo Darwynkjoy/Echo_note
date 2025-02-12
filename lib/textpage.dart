@@ -1,5 +1,5 @@
 import 'package:echo_note/appwrite.dart';
-import 'package:echo_note/editnotepage.dart';
+import 'package:echo_note/edittextpage.dart';
 import 'package:echo_note/homepage.dart';
 import 'package:flutter/material.dart';
 

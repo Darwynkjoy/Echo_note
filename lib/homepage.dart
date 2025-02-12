@@ -1,10 +1,12 @@
 import 'dart:math';
+import 'package:echo_note/add_taskpage.dart';
 import 'package:echo_note/appwrite.dart';
-import 'package:echo_note/editnotepage.dart';
-import 'package:echo_note/note_data.dart';
-import 'package:echo_note/addnotepage.dart';
-import 'package:echo_note/notepage.dart';
+import 'package:echo_note/data.dart';
+import 'package:echo_note/edittextpage.dart';
+import 'package:echo_note/addtextpage.dart';
+import 'package:echo_note/textpage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class HomePage extends StatefulWidget{
   @override
@@ -30,7 +32,8 @@ static Color randomColor(){
     return colors[Random().nextInt(colors.length)];
   }
   late AppwriteService _appwriteService;
-  late List<notesData> _texts;
+  late List<textsData> _texts;
+  late List<tasksData> _tasks;
 
   @override
   void initState(){
@@ -38,13 +41,36 @@ static Color randomColor(){
     _appwriteService=AppwriteService();
     _texts=[];
     _loadTextDetails();
+    _loadTaskDetails();
   }
 
   Future <void> _loadTextDetails()async{
     try{
-      final task=await _appwriteService.getTextDetails();
+      final textBox=await _appwriteService.getTextDetails();
       setState(() {
-        _texts=task.map((e)=> notesData.fromDocument(e)).toList();
+        _texts=textBox.map((e)=> textsData.fromDocument(e)).toList();
+      });
+    }catch(e){
+      print("error loading text: $e");
+    }
+  }
+
+
+  Future<void> _deleteTextDetails(String textId)async{
+    try{
+      await _appwriteService.deleteText(textId);
+      _loadTextDetails();
+    }catch(e){
+      print("error deleting text:$e");
+    }
+  }
+
+  //task 
+  Future <void> _loadTaskDetails()async{
+    try{
+      final taskBox=await _appwriteService.getTaskDetails();
+      setState(() {
+        _tasks=taskBox.map((e)=> tasksData.fromDocument(e)).toList();
       });
     }catch(e){
       print("error loading task: $e");
@@ -52,10 +78,10 @@ static Color randomColor(){
   }
 
 
-  Future<void> _deleteTextDetatils(String taskId)async{
+  Future<void> _deleteTaskDetails(String taskId)async{
     try{
-      await _appwriteService.deleteText(taskId);
-      _loadTextDetails();
+      await _appwriteService.deleteTask(taskId);
+      _loadTaskDetails();
     }catch(e){
       print("error deleting task:$e");
     }
@@ -84,18 +110,46 @@ static Color randomColor(){
         TaskScreen(),
       ]),
 
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: SpeedDial(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         backgroundColor: const Color.fromARGB(255, 8, 179, 16),
-        onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>Addtextpage()));
-        },
+        activeChild: Icon(Icons.close,color: Colors.black,),
+        curve: Curves.bounceIn,
+        children: [
+          SpeedDialChild(
+            shape: CircleBorder(),
+            backgroundColor: const Color.fromARGB(255, 8, 179, 16),
+            elevation: 5,
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>Addtextpage()));
+            },
+            child: Icon(Icons.text_snippet,color: Colors.black,),label: "Text",labelStyle: TextStyle(color: Colors.green,fontWeight: FontWeight.bold)
+          ),
+          SpeedDialChild(
+            shape: CircleBorder(),
+            backgroundColor: const Color.fromARGB(255, 8, 179, 16),
+            elevation: 5,
+            onTap: () {
+              //Navigator.push(context, MaterialPageRoute(builder: (context)=>Addtaskpage()));
+            },
+            child: Icon(Icons.list,color: Colors.black,),label: "List",labelStyle: TextStyle(color: Colors.green,fontWeight: FontWeight.bold)
+          ),
+          SpeedDialChild(
+            shape: CircleBorder(),
+            backgroundColor: const Color.fromARGB(255, 8, 179, 16),
+            elevation: 5,
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>Addtaskpage()));
+            },
+            child: Icon(Icons.task,color: Colors.black,),label: "Task",labelStyle: TextStyle(color: Colors.green,fontWeight: FontWeight.bold)
+          )
+        ],
       child: Icon(Icons.add,color: Colors.black,size: 30,)),
-
     ),
     );
   }
 
-  //note screen 
+  //Text screen 
    Widget TextScreen(){
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -111,7 +165,7 @@ static Color randomColor(){
               final text=_texts[index];
               return GestureDetector(
                 onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Textpage(id: text.id, title: text.title, content: text.content)));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Textpage(id: text.textid, title: text.title, content: text.content)));
                 },
                 child: Container(
                   padding: EdgeInsets.all(10),
@@ -131,9 +185,9 @@ static Color randomColor(){
                           PopupMenuButton(
                             onSelected: (value){
                               if(value == 'Edit'){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>Edittextpage(id: text.id, title: text.title, content: text.content)));
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>Edittextpage(id: text.textid, title: text.title, content: text.content)));
                               }else{
-                                _deleteTextDetatils(text.id);
+                                _deleteTextDetails(text.textid);
                               }
                             },
                             itemBuilder: (BuildContext context){
@@ -160,14 +214,6 @@ static Color randomColor(){
   
   }
 
-  double _height=2;
-  Color _colors=Colors.red;
-  void _animateContainer(){
-    setState(() {
-      _height=_height == 2 ? 1 :2;
-
-    });
-  }
   //task screen
   Widget TaskScreen(){
      return Padding(
@@ -178,32 +224,51 @@ static Color randomColor(){
               mainAxisSpacing: 10,
               crossAxisSpacing: 10, 
             ),
-            itemCount: 10,
+            itemCount: _tasks.length,
             itemBuilder: (context, index) {
-              return AnimatedContainer(
-                height: _height,
-                duration: Duration(seconds: 5),
-                curve: Curves.decelerate,
+              final task=_tasks[index];
+              return Container(
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: _colors,
+                  color:  Color.fromRGBO(253, 99, 99, 1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Title",style: TextStyle(fontSize: 20,color: Colors.black,fontWeight: FontWeight.bold),),
-                        GestureDetector(
-                          onTap: _animateContainer,
-                          child: Icon(Icons.arrow_back_ios_new,color: Colors.black,))
-                      ],
-                    ),
+                    Text("${task.title}",style: TextStyle(fontSize: 20,color: Colors.black,fontWeight: FontWeight.bold),),
 
                     Text("06-07-25",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
                     Text("2:23",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
+                    Spacer(),
+                    Text("${task.description}",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
+                    Spacer(),
+                    Row(
+                      children: [
+                        Text("Task ended",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
+                        Spacer(),
+                        PopupMenuButton(
+                            onSelected: (value){
+                              if(value == 'Edit'){
+                                //Navigator.push(context, MaterialPageRoute(builder: (context)=>Edittextpage(id: text.textid, title: text.title, content: text.content)));
+                              }else{
+                                _deleteTextDetails(task.taskid);
+                              }
+                            },
+                            itemBuilder: (BuildContext context){
+                              return {'Edit','Delete'}.map((String choice){
+                                return PopupMenuItem<String>(
+                                  value: choice,
+                                  child: Text(choice),
+                                  );
+                              }).toList();
+                            },
+                            icon: Icon(Icons.more_vert),
+                            ),
+                      ],
+                    ),
+
+
 
                   ],
                 )
