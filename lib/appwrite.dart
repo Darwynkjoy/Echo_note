@@ -90,7 +90,7 @@ class AppwriteService {
     }
   }
 
-  Future<Document> addTask(String title,String content)async{
+  Future<Document> addTask(String title,String description,String date,String time)async{
     try{
       final DocumentId=ID.unique();
       final result=await databases.createDocument(
@@ -99,7 +99,9 @@ class AppwriteService {
         documentId: DocumentId,
         data: {
           "title":title,
-          "content":content,
+          "description":description,
+          "date":date,
+          "time":time,
         });
         return result;
     }catch(e){

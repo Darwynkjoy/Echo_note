@@ -19,14 +19,18 @@ class tasksData{
   final String taskid;
   final String title;
   final String description;
+  final String date;
+  final String time;
 
   tasksData({
   required this.taskid,
   required this.title,
   required this.description,
+  required this.date,
+  required this.time
 });
 
 factory tasksData.fromDocument(Document doc){
-  return tasksData(taskid: doc.$id,title: doc.data["title"], description: doc.data["description"]);
+  return tasksData(taskid: doc.$id,title: doc.data["title"], description: doc.data["description"],date: doc.data["date"],time: doc.data["time"]);
   } 
 }

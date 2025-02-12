@@ -40,6 +40,7 @@ static Color randomColor(){
     super.initState();
     _appwriteService=AppwriteService();
     _texts=[];
+    _tasks=[];
     _loadTextDetails();
     _loadTaskDetails();
   }

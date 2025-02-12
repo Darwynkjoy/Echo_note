@@ -13,8 +13,8 @@ class _addtaskState extends State<Addtaskpage>{
     TextEditingController titleContoller=TextEditingController();
     TextEditingController descriptionController=TextEditingController();
 
-    DateTime? selectedDate;
-    late TimeOfDay selectedtime=TimeOfDay.now();
+     DateTime? selectedDate;
+     TimeOfDay selectedtime=TimeOfDay.now();
 
     late AppwriteService _appwriteService;
     late List<tasksData> _tasks;
@@ -24,6 +24,10 @@ class _addtaskState extends State<Addtaskpage>{
       if( picked != null && picked != selectedDate){
         setState(() {
           selectedDate=picked;
+        });
+      }else{
+        setState(() {
+          selectedDate=DateTime.now();
         });
       }
     }
@@ -59,15 +63,17 @@ class _addtaskState extends State<Addtaskpage>{
 
     Future<void>_addTask()async{
     final title=titleContoller.text;
-    final content=descriptionController.text;
-    if(title.isEmpty || content.isEmpty){
+    final description=descriptionController.text;
+    final date=selectedDate;
+    final time=selectedtime;
+    if(title.isEmpty || description.isEmpty){
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Title and Description should not be empty"),backgroundColor: Colors.red,));
     }else{
     try{
-      await _appwriteService.addText(title,content);
+      await _appwriteService.addTask(title, description,date);
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage()));
     }catch(e){
-        print("error adding note:$e");
+        print("error adding task:$e");
     }
     }
   }
