@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:echo_note/add_taskpage.dart';
 import 'package:echo_note/appwrite.dart';
 import 'package:echo_note/data.dart';
+import 'package:echo_note/edit_taskpage.dart';
 import 'package:echo_note/edittextpage.dart';
 import 'package:echo_note/addtextpage.dart';
 import 'package:echo_note/textpage.dart';
@@ -107,7 +108,7 @@ static Color randomColor(){
 
       body: TabBarView(children: [
         TextScreen(),
-        Text("list"),
+        ListScreen(),
         TaskScreen(),
       ]),
 
@@ -215,6 +216,71 @@ static Color randomColor(){
   
   }
 
+  //List screen
+  Widget ListScreen(){
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              childAspectRatio: 1.2
+            ),
+            itemCount: _texts.length,
+            itemBuilder: (context, index) {
+              final text=_texts[index];
+              return GestureDetector(
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Textpage(id: text.textid, title: text.title, content: text.content)));
+                },
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: randomColor(),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("${text.title}",style: TextStyle(fontSize: 20,color: Colors.black,fontWeight: FontWeight.bold),),
+                          //popupmenu for edit and delete
+                          PopupMenuButton(
+                            onSelected: (value){
+                              if(value == 'Edit'){
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>Edittextpage(id: text.textid, title: text.title, content: text.content)));
+                              }else{
+                                _deleteTextDetails(text.textid);
+                              }
+                            },
+                            itemBuilder: (BuildContext context){
+                              return {'Edit','Delete'}.map((String choice){
+                                return PopupMenuItem<String>(
+                                  value: choice,
+                                  child: Text(choice),
+                                  );
+                              }).toList();
+                            },
+                            icon: Icon(Icons.more_vert),
+                            ),
+                        ],
+                      ),
+                
+                      Text("${text.content}",style: TextStyle(fontSize: 16),overflow: TextOverflow.visible,)
+                    ],
+                  )
+                ),
+              );
+            }
+      ),
+    );
+  
+  }
+
   //task screen
   Widget TaskScreen(){
      return Padding(
@@ -239,10 +305,10 @@ static Color randomColor(){
                   children: [
                     Text("${task.title}",style: TextStyle(fontSize: 20,color: Colors.black,fontWeight: FontWeight.bold),),
 
-                    Text("06-07-25",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
-                    Text("2:23",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
+                    Text("${task.date}",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
+                    Text("${task.time}",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
                     Spacer(),
-                    Text("${task.description}",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
+                    Text("${task.description}",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),overflow: TextOverflow.ellipsis,maxLines: 1,),
                     Spacer(),
                     Row(
                       children: [
@@ -251,7 +317,7 @@ static Color randomColor(){
                         PopupMenuButton(
                             onSelected: (value){
                               if(value == 'Edit'){
-                                //Navigator.push(context, MaterialPageRoute(builder: (context)=>Edittextpage(id: text.textid, title: text.title, content: text.content)));
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>Editaskpage()));
                               }else{
                                 _deleteTextDetails(task.taskid);
                               }
