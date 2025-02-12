@@ -3,18 +3,18 @@ import 'package:echo_note/data.dart';
 import 'package:echo_note/homepage.dart';
 import 'package:flutter/material.dart';
 
-class Editaskpage extends StatefulWidget{
+class EditTaskpage extends StatefulWidget{
   @override
   final String id;
   final String title;
   final String description;
   final String date;
   final String time;
-  const Edittaskpage({super.key,required this.id,required this.title,required this.description,required this.date,required this.time});
-  State<Editaskpage> createState()=> _edittaskState();
+  const EditTaskpage({super.key,required this.id,required this.title,required this.description,required this.date,required this.time});
+  State<EditTaskpage> createState()=> _edittaskState();
 }
 
-class _edittaskState extends State<Editaskpage>{
+class _edittaskState extends State<EditTaskpage>{
 
     TextEditingController titleContoller=TextEditingController();
     TextEditingController descriptionController=TextEditingController();

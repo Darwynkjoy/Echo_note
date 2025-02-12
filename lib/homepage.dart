@@ -317,7 +317,7 @@ static Color randomColor(){
                         PopupMenuButton(
                             onSelected: (value){
                               if(value == 'Edit'){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>Editaskpage()));
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>EditTaskpage(id: task.taskid, title: task.title, description: task.description, date: task.date, time: task.time)));
                               }else{
                                 _deleteTextDetails(task.taskid);
                               }
