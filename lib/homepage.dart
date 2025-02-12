@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:echo_note/add_listpage.dart';
 import 'package:echo_note/add_taskpage.dart';
 import 'package:echo_note/appwrite.dart';
 import 'package:echo_note/data.dart';
@@ -35,6 +36,7 @@ static Color randomColor(){
   late AppwriteService _appwriteService;
   late List<textsData> _texts;
   late List<tasksData> _tasks;
+  late List<listsData> _lists;
 
   @override
   void initState(){
@@ -42,8 +44,10 @@ static Color randomColor(){
     _appwriteService=AppwriteService();
     _texts=[];
     _tasks=[];
+    _lists=[];
     _loadTextDetails();
     _loadTaskDetails();
+    _loadListDetails();
   }
 
   Future <void> _loadTextDetails()async{
@@ -86,6 +90,28 @@ static Color randomColor(){
       _loadTaskDetails();
     }catch(e){
       print("error deleting task:$e");
+    }
+  }
+
+  //List
+  Future <void> _loadListDetails()async{
+    try{
+      final listBox=await _appwriteService.getListDetails();
+      setState(() {
+        _lists=listBox.map((e)=> listsData.fromDocument(e)).toList();
+      });
+    }catch(e){
+      print("error loading list: $e");
+    }
+  }
+
+
+  Future<void> _deleteListDetails(String listId)async{
+    try{
+      await _appwriteService.deleteList(listId);
+      _loadListDetails();
+    }catch(e){
+      print("error deleting list:$e");
     }
   }
 
@@ -132,7 +158,7 @@ static Color randomColor(){
             backgroundColor: const Color.fromARGB(255, 8, 179, 16),
             elevation: 5,
             onTap: () {
-              //Navigator.push(context, MaterialPageRoute(builder: (context)=>Addtaskpage()));
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>Addlistpage()));
             },
             child: Icon(Icons.list,color: Colors.black,),label: "List",labelStyle: TextStyle(color: Colors.green,fontWeight: FontWeight.bold)
           ),
@@ -227,12 +253,12 @@ static Color randomColor(){
               crossAxisSpacing: 10,
               childAspectRatio: 1.2
             ),
-            itemCount: _texts.length,
+            itemCount: _lists.length,
             itemBuilder: (context, index) {
-              final text=_texts[index];
+              final List=_lists[index];
               return GestureDetector(
                 onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Textpage(id: text.textid, title: text.title, content: text.content)));
+                 // Navigator.push(context, MaterialPageRoute(builder: (context)=>Textpage(id: text.textid, title: text.title, content: text.content)));
                 },
                 child: Container(
                   padding: EdgeInsets.all(10),
@@ -247,14 +273,14 @@ static Color randomColor(){
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("${text.title}",style: TextStyle(fontSize: 20,color: Colors.black,fontWeight: FontWeight.bold),),
+                          Text("${List.title}",style: TextStyle(fontSize: 20,color: Colors.black,fontWeight: FontWeight.bold),),
                           //popupmenu for edit and delete
                           PopupMenuButton(
                             onSelected: (value){
                               if(value == 'Edit'){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>Edittextpage(id: text.textid, title: text.title, content: text.content)));
+                                //Navigator.push(context, MaterialPageRoute(builder: (context)=>Edittextpage(id: text.textid, title: text.title, content: text.content)));
                               }else{
-                                _deleteTextDetails(text.textid);
+                                _deleteListDetails(List.listid);
                               }
                             },
                             itemBuilder: (BuildContext context){
@@ -270,7 +296,7 @@ static Color randomColor(){
                         ],
                       ),
                 
-                      Text("${text.content}",style: TextStyle(fontSize: 16),overflow: TextOverflow.visible,)
+                      Text("${List.items}",style: TextStyle(fontSize: 16),overflow: TextOverflow.visible,)
                     ],
                   )
                 ),

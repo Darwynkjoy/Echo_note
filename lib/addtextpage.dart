@@ -45,7 +45,7 @@ class _addtextState extends State<Addtextpage>{
       await _appwriteService.addText(title,content);
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage()));
     }catch(e){
-        print("error adding note:$e");
+        print("error adding text:$e");
     }
     }
   }

@@ -34,3 +34,19 @@ factory tasksData.fromDocument(Document doc){
   return tasksData(taskid: doc.$id,title: doc.data["title"], description: doc.data["description"],date: doc.data["date"],time: doc.data["time"]);
   } 
 }
+
+class listsData{
+  final String listid;
+  final String title;
+  final String items;
+
+listsData({
+  required this.listid,
+  required this.title,
+  required this.items,
+});
+
+factory listsData.fromDocument(Document doc){
+  return listsData(listid: doc.$id,title: doc.data["title"], items: doc.data["items"]);
+  } 
+}

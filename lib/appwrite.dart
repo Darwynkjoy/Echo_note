@@ -10,6 +10,7 @@ class AppwriteService {
   static const databasesId="67a6f0900020b4e16021";
   static const textcollectionId="67a6f0b3003aed7bfcc0";
   static const taskcollectionId="67ab242f001f00f3a6d7";
+  static const listcollectionId="67ac414700340080486d";
 
   AppwriteService(){
     client =Client();
@@ -139,6 +140,66 @@ class AppwriteService {
         );
     }catch(e){
       print("error updating task:$e");
+      rethrow;
+    }
+  }
+
+  //list
+  Future<List<Document>> getListDetails()async{
+    try{
+      final result=await databases.listDocuments(databaseId: databasesId, collectionId: listcollectionId);
+      return result.documents;
+    }catch(e){
+      print("error loading list:$e");
+      rethrow;
+    }
+  }
+
+  Future<Document> addList(String title,String items)async{
+    try{
+      final DocumentId=ID.unique();
+      final result=await databases.createDocument(
+        databaseId: databasesId,
+        collectionId: listcollectionId,
+        documentId: DocumentId,
+        data: {
+          "title":title,
+          "items":items
+        });
+        return result;
+    }catch(e){
+      print("error creating list:$e");
+      rethrow;
+    }
+  }
+
+  Future<Document> updateList(String documentId,String title,String items)async{
+  try{
+    final result= await databases.updateDocument(
+      collectionId: listcollectionId,
+      databaseId: databasesId,
+      documentId: documentId,
+      data:{
+       "title":title,
+       "items":items,
+      },
+    );
+    return result;
+  }catch(e){
+    print("error updating List:$e");
+    rethrow;
+  }
+}
+
+  Future<void> deleteList(String documentId)async{
+    try{
+      await databases.deleteDocument(
+        databaseId: databasesId,
+        collectionId: listcollectionId,
+        documentId: documentId
+        );
+    }catch(e){
+      print("error updating List:$e");
       rethrow;
     }
   }
