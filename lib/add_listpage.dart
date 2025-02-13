@@ -42,7 +42,7 @@ class _addlistState extends State<Addlistpage>{
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Title and items should not be empty"),backgroundColor: Colors.red,));
     }else{
     try{
-      await _appwriteService.addList(title,items);
+      //await _appwriteService.addList(title,List<String> items);
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage()));
     }catch(e){
         print("error adding list:$e");

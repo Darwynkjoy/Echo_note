@@ -145,17 +145,17 @@ class AppwriteService {
   }
 
   //list
-  Future<List<Document>> getListDetails()async{
+  Future<List<Map<String,dynamic>>> getListDetails()async{
     try{
       final result=await databases.listDocuments(databaseId: databasesId, collectionId: listcollectionId);
-      return result.documents;
+      return result.documents.map((doc)=>doc.data).toList();
     }catch(e){
       print("error loading list:$e");
       rethrow;
     }
   }
 
-  Future<Document> addList(String title,String items)async{
+  Future<Document> addList(String title,List<String> items)async{
     try{
       final DocumentId=ID.unique();
       final result=await databases.createDocument(
@@ -173,7 +173,7 @@ class AppwriteService {
     }
   }
 
-  Future<Document> updateList(String documentId,String title,String items)async{
+  Future<Document> updateList(String documentId,String title,List<String> items)async{
   try{
     final result= await databases.updateDocument(
       collectionId: listcollectionId,

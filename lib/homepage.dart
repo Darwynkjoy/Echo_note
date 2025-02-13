@@ -38,6 +38,7 @@ static Color randomColor(){
   late List<tasksData> _tasks;
   late List<listsData> _lists;
 
+
   @override
   void initState(){
     super.initState();
@@ -251,12 +252,12 @@ static Color randomColor(){
               crossAxisCount: 2,
               mainAxisSpacing: 10,
               crossAxisSpacing: 10,
-              childAspectRatio: 1/2,
+              childAspectRatio: .9,
             ),
             itemCount: _lists.length,
             itemBuilder: (context, index) {
-              final List=_lists[index];
-              final item=List.items[index];
+              final itemList=_lists[index];
+              final itemsLength=itemList.items;
               return GestureDetector(
                 onTap: (){
                  // Navigator.push(context, MaterialPageRoute(builder: (context)=>Textpage(id: text.textid, title: text.title, content: text.content)));
@@ -274,14 +275,14 @@ static Color randomColor(){
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("${List.title}",style: TextStyle(fontSize: 20,color: Colors.black,fontWeight: FontWeight.bold),),
+                          Text("${itemList.title}",style: TextStyle(fontSize: 20,color: Colors.black,fontWeight: FontWeight.bold),),
                           //popupmenu for edit and delete
                           PopupMenuButton(
                             onSelected: (value){
                               if(value == 'Edit'){
                                 //Navigator.push(context, MaterialPageRoute(builder: (context)=>Edittextpage(id: text.textid, title: text.title, content: text.content)));
                               }else{
-                                _deleteListDetails(List.listid);
+                                //_deleteListDetails(List.listid);
                               }
                             },
                             itemBuilder: (BuildContext context){
@@ -296,16 +297,15 @@ static Color randomColor(){
                             ),
                         ],
                       ),
-                      Container(
-                        height: 80,
+                      Expanded(
                         child: ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: item,
+                          //physics: const NeverScrollableScrollPhysics(),
+                          itemCount: itemsLength.length,
                           itemBuilder: (context,index){
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("${item[index]}")
+                              Text("${itemList.items[index]}",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),)
                             ],
                           );
                         }),
@@ -347,7 +347,7 @@ static Color randomColor(){
                     Text("${task.date}",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
                     Text("${task.time}",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
                     Spacer(),
-                    Text("${task.description}",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),overflow: TextOverflow.ellipsis,maxLines: 1,),
+                    Text("${task.description}",style: TextStyle(fontSize: 20,),overflow: TextOverflow.ellipsis,maxLines: 1,),
                     Spacer(),
                     Row(
                       children: [
