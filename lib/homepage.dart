@@ -251,9 +251,9 @@ static Color randomColor(){
               crossAxisCount: 2,
               mainAxisSpacing: 10,
               crossAxisSpacing: 10,
-              childAspectRatio: 1/_lists.length,
+              childAspectRatio: 1/2,
             ),
-            itemCount: 4,
+            itemCount: _lists.length,
             itemBuilder: (context, index) {
               final List=_lists[index];
               final item=List.items[index];
