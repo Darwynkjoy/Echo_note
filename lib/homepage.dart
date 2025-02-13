@@ -251,11 +251,12 @@ static Color randomColor(){
               crossAxisCount: 2,
               mainAxisSpacing: 10,
               crossAxisSpacing: 10,
-              childAspectRatio: 1.2
+              childAspectRatio: 1/_lists.length,
             ),
-            itemCount: _lists.length,
+            itemCount: 4,
             itemBuilder: (context, index) {
               final List=_lists[index];
+              final item=List.items[index];
               return GestureDetector(
                 onTap: (){
                  // Navigator.push(context, MaterialPageRoute(builder: (context)=>Textpage(id: text.textid, title: text.title, content: text.content)));
@@ -295,17 +296,20 @@ static Color randomColor(){
                             ),
                         ],
                       ),
-                      Expanded(
+                      Container(
+                        height: 80,
                         child: ListView.builder(
-                          itemCount: List.items,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: item,
                           itemBuilder: (context,index){
-                          return ListTile(
-                            tileColor: Colors.amber,
-                            leading: Text("${List.items[index]}",style: TextStyle(fontSize: 16),),
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("${item[index]}")
+                            ],
                           );
                         }),
                       ),
-                      Text("${List.items[index]}",style: TextStyle(fontSize: 16),)
                     ],
                   )
                 ),
