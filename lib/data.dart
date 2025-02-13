@@ -38,7 +38,7 @@ factory tasksData.fromDocument(Document doc){
 class listsData{
   final String listid;
   final String title;
-  final String items;
+  final dynamic items;
 
 listsData({
   required this.listid,

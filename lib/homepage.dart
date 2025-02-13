@@ -295,8 +295,17 @@ static Color randomColor(){
                             ),
                         ],
                       ),
-                
-                      Text("${List.items}",style: TextStyle(fontSize: 16),overflow: TextOverflow.visible,)
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: List.items,
+                          itemBuilder: (context,index){
+                          return ListTile(
+                            tileColor: Colors.amber,
+                            leading: Text("${List.items[index]}",style: TextStyle(fontSize: 16),),
+                          );
+                        }),
+                      ),
+                      Text("${List.items[index]}",style: TextStyle(fontSize: 16),)
                     ],
                   )
                 ),
