@@ -6,6 +6,7 @@ import 'package:echo_note/data.dart';
 import 'package:echo_note/edit_taskpage.dart';
 import 'package:echo_note/edittextpage.dart';
 import 'package:echo_note/addtextpage.dart';
+import 'package:echo_note/list_page.dart';
 import 'package:echo_note/textpage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -15,9 +16,6 @@ class HomePage extends StatefulWidget{
   State<HomePage> createState()=> _homepageState();
 }
 class _homepageState extends State<HomePage>{
-
-  TextEditingController titleContoller=TextEditingController();
-  TextEditingController contentContoller=TextEditingController();
 
 static Color randomColor(){
     List<Color> colors=[
@@ -260,7 +258,7 @@ static Color randomColor(){
               final itemsLength=itemList.items;
               return GestureDetector(
                 onTap: (){
-                 // Navigator.push(context, MaterialPageRoute(builder: (context)=>Textpage(id: text.textid, title: text.title, content: text.content)));
+                 Navigator.push(context, MaterialPageRoute(builder: (context)=>ListPage(id: itemList.listid, title: itemList.title, items: itemList.items)));
                 },
                 child: Container(
                   padding: EdgeInsets.all(10),
@@ -280,9 +278,9 @@ static Color randomColor(){
                           PopupMenuButton(
                             onSelected: (value){
                               if(value == 'Edit'){
-                                //Navigator.push(context, MaterialPageRoute(builder: (context)=>Edittextpage(id: text.textid, title: text.title, content: text.content)));
+                                //Navigator.push(context, MaterialPageRoute(builder: (context)=>Ed));
                               }else{
-                                //_deleteListDetails(List.listid);
+                                _deleteListDetails(itemList.listid);
                               }
                             },
                             itemBuilder: (BuildContext context){
@@ -347,7 +345,7 @@ static Color randomColor(){
                     Text("${task.date}",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
                     Text("${task.time}",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
                     Spacer(),
-                    Text("${task.description}",style: TextStyle(fontSize: 20,),overflow: TextOverflow.ellipsis,maxLines: 1,),
+                    Text("${task.description}",style: TextStyle(fontSize: 20,),overflow: TextOverflow.ellipsis,maxLines: 2,),
                     Spacer(),
                     Row(
                       children: [

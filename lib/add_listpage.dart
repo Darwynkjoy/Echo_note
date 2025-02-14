@@ -11,7 +11,8 @@ class Addlistpage extends StatefulWidget{
 class _addlistState extends State<Addlistpage>{
 
     TextEditingController titleContoller=TextEditingController();
-    TextEditingController itemsContoller=TextEditingController();
+    TextEditingController itemsController=TextEditingController();
+    List <String> itemList=[];
 
     late AppwriteService _appwriteService;
     late List<listsData> _lists;
@@ -20,6 +21,7 @@ class _addlistState extends State<Addlistpage>{
   void initState(){
     super.initState;
     _appwriteService=AppwriteService();
+    itemList;
     _lists=[];
     _loadListDetails();
   }
@@ -37,12 +39,12 @@ class _addlistState extends State<Addlistpage>{
 
   Future<void>_addList()async{
     final title=titleContoller.text;
-    final items=itemsContoller.text;
+    final items=itemList;
     if(title.isEmpty || items.isEmpty){
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Title and items should not be empty"),backgroundColor: Colors.red,));
     }else{
     try{
-      //await _appwriteService.addList(title,List<String> items);
+      await _appwriteService.addList(title,items);
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage()));
     }catch(e){
         print("error adding list:$e");
@@ -88,7 +90,7 @@ class _addlistState extends State<Addlistpage>{
             SizedBox(height: 10,),
             //content textfeild
             TextField(
-              controller: itemsContoller,
+              controller: itemsController,
               decoration: InputDecoration(
                 //not in selection
                 enabledBorder: OutlineInputBorder(
@@ -105,7 +107,16 @@ class _addlistState extends State<Addlistpage>{
                 floatingLabelAlignment: FloatingLabelAlignment.start,
                 alignLabelWithHint: true,
                 suffixIcon: GestureDetector(
-                  onTap: (){},
+                  onTap: (){
+                    if(itemsController.text.isEmpty){
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Title and items should not be empty"),backgroundColor: Colors.red,));
+                    }else{
+                    setState(() {
+                      itemList.add(itemsController.text);
+                      itemsController.clear();
+                    });
+                    }
+                  },
                   child: Icon(Icons.add,color:  const Color.fromARGB(255, 8, 179, 16),))
                 ),
                 textAlignVertical: TextAlignVertical.top,
@@ -113,11 +124,15 @@ class _addlistState extends State<Addlistpage>{
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: 5,
+                itemCount: itemList.length,
                 itemBuilder: (context,index){
                 return ListTile(
-                  leading: Text("data",style: TextStyle(fontSize: 20,color: Colors.black),),
-                  trailing: IconButton(onPressed: (){},
+                  leading: Text("${itemList[index]}",style: TextStyle(fontSize: 20,color: Colors.black),),
+                  trailing: IconButton(onPressed: (){
+                    setState(() {
+                        itemList.removeAt(index);
+                    });
+                  },
                   icon: Icon(Icons.close)),
                 );
               }),

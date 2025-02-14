@@ -36,19 +36,19 @@ factory tasksData.fromDocument(Document doc){
 }
 
 class listsData{
-  //final String listid;
+  final String listid;
   final String title;
   final List<String> items;
 
 listsData({
-  //required this.listid,
+  required this.listid,
   required this.title,
   required this.items,
 });
 
 factory listsData.fromDocument(Map<String,dynamic> doc){
   return listsData(
-
+    listid: doc['\$id'] as String,
     title: doc['title'] as String,
     items: List<String>.from(doc['items']??[]));
   } 
