@@ -1,4 +1,5 @@
 import 'package:echo_note/appwrite.dart';
+import 'package:echo_note/edit_listpage.dart';
 import 'package:echo_note/homepage.dart';
 import 'package:flutter/material.dart';
 
@@ -25,12 +26,13 @@ class _listpageState extends State<ListPage>{
 
   Future<void> _deleteListDetatils(String listId)async{
     try{
-      await _appwriteService.deleteText(listId);
+      await _appwriteService.deleteList(listId);
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage()));
     }catch(e){
       print("error deleting list:$e");
     }
   }
+  
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
@@ -41,7 +43,7 @@ class _listpageState extends State<ListPage>{
         }, icon: Icon(Icons.arrow_back,color: Colors.white,)),
         actions: [
           IconButton(onPressed: (){
-            //Navigator.push(context, MaterialPageRoute(builder: (context)=>Edittextpage(id: widget.id, title: widget.title, content: widget.)));
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>Editlistpage(id: widget.id, title:widget.title, items:widget.items)));
           }, icon: Icon(Icons.edit,color: Colors.white,)),
           IconButton(onPressed: (){
             _deleteListDetatils(widget.id);

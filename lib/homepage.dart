@@ -3,6 +3,7 @@ import 'package:echo_note/add_listpage.dart';
 import 'package:echo_note/add_taskpage.dart';
 import 'package:echo_note/appwrite.dart';
 import 'package:echo_note/data.dart';
+import 'package:echo_note/edit_listpage.dart';
 import 'package:echo_note/edit_taskpage.dart';
 import 'package:echo_note/edittextpage.dart';
 import 'package:echo_note/addtextpage.dart';
@@ -119,6 +120,7 @@ static Color randomColor(){
     return DefaultTabController(length: 3, child: Scaffold(
       appBar: AppBar(
         title: Text("Echo Notes",style: TextStyle(fontSize: 30,color: Colors.white,fontWeight: FontWeight.bold),),
+        centerTitle: false,
         backgroundColor: const Color.fromARGB(255, 8, 179, 16),
         bottom: TabBar(
           indicatorColor: Colors.white,
@@ -278,7 +280,7 @@ static Color randomColor(){
                           PopupMenuButton(
                             onSelected: (value){
                               if(value == 'Edit'){
-                                //Navigator.push(context, MaterialPageRoute(builder: (context)=>Ed));
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>Editlistpage(id: itemList.listid, title: itemList.title, items: itemList.items)));
                               }else{
                                 _deleteListDetails(itemList.listid);
                               }
@@ -345,7 +347,7 @@ static Color randomColor(){
                     Text("${task.date}",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
                     Text("${task.time}",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
                     Spacer(),
-                    Text("${task.description}",style: TextStyle(fontSize: 20,),overflow: TextOverflow.ellipsis,maxLines: 2,),
+                    Text("${task.description}",style: TextStyle(fontSize: 18,),overflow: TextOverflow.ellipsis,maxLines: 2,),
                     Spacer(),
                     Row(
                       children: [
