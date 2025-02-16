@@ -333,12 +333,14 @@ static Color randomColor(){
             itemCount: _tasks.length,
             itemBuilder: (context, index) {
               final task=_tasks[index];
+
               // Convert time string to TimeOfDay
-        List<String> timeParts = task.time.split(":");
-        TimeOfDay time = TimeOfDay(
-          hour: int.parse(timeParts[0]),
-          minute: int.parse(timeParts[1]),
-        );
+              List<String> timeParts = task.time.split(":");
+              TimeOfDay time = TimeOfDay(
+              hour: int.parse(timeParts[0]),
+              minute: int.parse(timeParts[1]),
+              );
+              
               return Container(
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
