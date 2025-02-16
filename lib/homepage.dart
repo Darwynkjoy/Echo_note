@@ -333,6 +333,12 @@ static Color randomColor(){
             itemCount: _tasks.length,
             itemBuilder: (context, index) {
               final task=_tasks[index];
+              // Convert time string to TimeOfDay
+        List<String> timeParts = task.time.split(":");
+        TimeOfDay time = TimeOfDay(
+          hour: int.parse(timeParts[0]),
+          minute: int.parse(timeParts[1]),
+        );
               return Container(
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
@@ -345,7 +351,7 @@ static Color randomColor(){
                     Text("${task.title}",style: TextStyle(fontSize: 20,color: Colors.black,fontWeight: FontWeight.bold),),
 
                     Text("${task.date}",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
-                    Text("${task.time}",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
+                    Text("${time.format(context)}",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
                     Spacer(),
                     Text("${task.description}",style: TextStyle(fontSize: 18,),overflow: TextOverflow.ellipsis,maxLines: 2,),
                     Spacer(),
@@ -356,7 +362,7 @@ static Color randomColor(){
                         PopupMenuButton(
                             onSelected: (value){
                               if(value == 'Edit'){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>EditTaskpage(taskid: task.taskid, title: task.title, description: task.description, date: task.date, time: task.time)));
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>EditTaskpage(taskid: task.taskid, title: task.title, description: task.description, date: task.date, time: time)));
                               }else{
                                 _deleteTaskDetails(task.taskid);
                               }

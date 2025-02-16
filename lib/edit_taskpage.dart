@@ -8,7 +8,7 @@ class EditTaskpage extends StatefulWidget{
   final String title;
   final String description;
   final String date;
-  final String time;
+  final TimeOfDay time;
   const EditTaskpage({super.key,required this.taskid,required this.title,required this.description,required this.date,required this.time});
   State<EditTaskpage> createState()=> _edittaskState();
 }
@@ -20,17 +20,27 @@ class _edittaskState extends State<EditTaskpage>{
     late AppwriteService _appwriteService;
     
      DateTime selectedDate=DateTime.now();
-     TimeOfDay selectedtime=TimeOfDay.now();
+     late TimeOfDay selectedtime;
+     bool isDateSelected = false; // New flag to track user selection
 
 
-    Future <void> _selectedDate(BuildContext context)async{
-      final DateTime? picked=await showDatePicker(context: context, initialDate: DateTime.now(),firstDate: DateTime(1990), lastDate: DateTime(2100));
-      if( picked != null && picked != selectedDate){
-        setState(() {
-          selectedDate=picked;
-        });
-      }
-    }
+
+    Future<void> _selectedDate(BuildContext context) async {
+  final DateTime? picked = await showDatePicker(
+    context: context,
+    initialDate: selectedDate,
+    firstDate: DateTime(1990),
+    lastDate: DateTime(2100),
+  );
+
+  if (picked != null && picked != selectedDate) {
+    setState(() {
+      selectedDate = picked;
+      isDateSelected = true; // Mark that a new date is chosen
+    });
+  }
+}
+
 
     Future<void> _selectedTime(BuildContext context)async{
       final TimeOfDay? picked=
@@ -48,6 +58,7 @@ class _edittaskState extends State<EditTaskpage>{
     _appwriteService=AppwriteService();
     titleContoller=TextEditingController(text: widget.title);
     descriptionController=TextEditingController(text: widget.description);
+    selectedtime=widget.time;
   }
 
     Future<void> _updateTask() async {
@@ -138,10 +149,18 @@ class _edittaskState extends State<EditTaskpage>{
                   _selectedTime(context);
                 },
                 child: Text("${selectedtime.format(context)}",style: TextStyle(fontSize: 20,color: const Color.fromARGB(255, 8, 179, 16),),),),
-                TextButton(onPressed: (){
-                  _selectedDate(context);
-                },
-                child: Text(selectedDate != null? "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}":"${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}",style: TextStyle(fontSize: 20,color: const Color.fromARGB(255, 8, 179, 16),),),)
+                
+                TextButton(
+                  onPressed: () {
+                    _selectedDate(context);
+                  },
+                  child: Text(
+                    isDateSelected
+                        ? "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}" // Show new date if selected
+                        : widget.date, // Show original date if no new selection
+                    style: TextStyle(fontSize: 20, color: Color.fromARGB(255, 8, 179, 16)),
+                  ),
+                ),
               ],
             )
           ],
