@@ -1,4 +1,4 @@
-import 'package:echo_note/homepage.dart';
+import 'package:echo_note/splashscreen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      home: Splashscreen(),
     );
   }
 }

@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:echo_note/add_listpage.dart';
 import 'package:echo_note/add_taskpage.dart';
 import 'package:echo_note/appwrite.dart';
@@ -18,24 +17,11 @@ class HomePage extends StatefulWidget{
 }
 class _homepageState extends State<HomePage>{
 
-static Color randomColor(){
-    List<Color> colors=[
-      Color.fromRGBO(198, 245, 205, 1),
-      Color.fromRGBO(148, 211, 247, 1),
-      Color.fromRGBO(243, 174, 150, 1),
-      Color.fromRGBO(203, 224, 171, 1),
-      Color.fromRGBO(145, 201, 196, 1),
-      Color.fromRGBO(239, 135, 170, 1),
-      Color.fromRGBO(186, 252, 235, 1),
-      Color.fromARGB(255, 183, 139, 212),
-      Color.fromRGBO(253, 99, 99, 1),
-    ];
-    return colors[Random().nextInt(colors.length)];
-  }
   late AppwriteService _appwriteService;
   late List<textsData> _texts;
   late List<tasksData> _tasks;
   late List<listsData> _lists;
+
 
 
   @override
@@ -119,7 +105,18 @@ static Color randomColor(){
   Widget build(BuildContext context){
     return DefaultTabController(length: 3, child: Scaffold(
       appBar: AppBar(
-        title: Text("Echo Notes",style: TextStyle(fontSize: 30,color: Colors.white,fontWeight: FontWeight.bold),),
+        title: RichText(
+          text: TextSpan(
+            text: "Echo",
+            style: TextStyle(fontSize: 33, fontWeight: FontWeight.bold, color: Colors.white,),
+            children: <TextSpan>[
+              TextSpan(
+                text: " Note",
+                style: TextStyle(fontSize: 34, fontWeight: FontWeight.bold, color: Colors.black),
+              ),
+            ],
+          ),
+        ),
         centerTitle: false,
         backgroundColor: const Color.fromARGB(255, 8, 179, 16),
         bottom: TabBar(
@@ -187,7 +184,7 @@ static Color randomColor(){
               crossAxisCount: 2,
               mainAxisSpacing: 10,
               crossAxisSpacing: 10,
-              childAspectRatio: 1.2
+              childAspectRatio: .9
             ),
             itemCount: _texts.length,
             itemBuilder: (context, index) {
@@ -199,7 +196,7 @@ static Color randomColor(){
                 child: Container(
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: randomColor(),
+                    color: const Color.fromARGB(69, 8, 179, 17),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Column(
@@ -232,7 +229,7 @@ static Color randomColor(){
                         ],
                       ),
                 
-                      Text("${text.content}",style: TextStyle(fontSize: 16),overflow: TextOverflow.visible,)
+                      Text("${text.content}",style: TextStyle(fontSize: 16),overflow: TextOverflow.ellipsis,maxLines: 6,)
                     ],
                   )
                 ),
@@ -265,7 +262,7 @@ static Color randomColor(){
                 child: Container(
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: randomColor(),
+                    color: const Color.fromARGB(92, 0, 140, 255),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Column(
@@ -344,46 +341,40 @@ static Color randomColor(){
               return Container(
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color:  Color.fromRGBO(253, 99, 99, 1),
+                  color:  Color.fromRGBO(255, 0, 0, 0.39),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("${task.title}",style: TextStyle(fontSize: 20,color: Colors.black,fontWeight: FontWeight.bold),),
-
+                    Expanded(child: Text("${task.title}",style: TextStyle(fontSize: 19,color: Colors.black,fontWeight: FontWeight.bold),overflow: TextOverflow.ellipsis,)),
                     Text("${task.date}",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
                     Text("${time.format(context)}",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
-                    Spacer(),
-                    Text("${task.description}",style: TextStyle(fontSize: 18,),overflow: TextOverflow.ellipsis,maxLines: 2,),
-                    Spacer(),
+                    SizedBox(height: 10,),
                     Row(
                       children: [
-                        Text("Task ended",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
-                        Spacer(),
+                        Expanded(child: Text("${task.description}",style: TextStyle(fontSize: 16,),overflow: TextOverflow.ellipsis,maxLines: 4,)),
                         PopupMenuButton(
-                            onSelected: (value){
-                              if(value == 'Edit'){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>EditTaskpage(taskid: task.taskid, title: task.title, description: task.description, date: task.date, time: time)));
-                              }else{
-                                _deleteTaskDetails(task.taskid);
-                              }
-                            },
-                            itemBuilder: (BuildContext context){
-                              return {'Edit','Delete'}.map((String choice){
-                                return PopupMenuItem<String>(
-                                  value: choice,
-                                  child: Text(choice),
-                                  );
-                              }).toList();
-                            },
-                            icon: Icon(Icons.more_vert),
-                            ),
+                        onSelected: (value){
+                          if(value == 'Edit'){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>EditTaskpage(taskid: task.taskid, title: task.title, description: task.description, date: task.date, time: time)));
+                          }else{
+                            _deleteTaskDetails(task.taskid);
+                          }
+                        },
+                        itemBuilder: (BuildContext context){
+                          return {'Edit','Delete'}.map((String choice){
+                            return PopupMenuItem<String>(
+                              value: choice,
+                              child: Text(choice),
+                              );
+                          }).toList();
+                        },
+                        icon: Icon(Icons.more_vert),
+                        ),
                       ],
                     ),
-
-
-
+                    
                   ],
                 )
               );

@@ -3,7 +3,7 @@ import 'package:echo_note/textpage.dart';
 import 'package:flutter/material.dart';
 
 class Edittextpage extends StatefulWidget{
-  @override
+
   final String id;
   final String title;
   final String content;

@@ -4,7 +4,7 @@ import 'package:echo_note/list_page.dart';
 import 'package:flutter/material.dart';
 
 class Editlistpage extends StatefulWidget{
-  @override
+
   final String id;
   final String title;
   final List<String> items;

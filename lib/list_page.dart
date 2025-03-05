@@ -4,7 +4,7 @@ import 'package:echo_note/homepage.dart';
 import 'package:flutter/material.dart';
 
 class ListPage extends StatefulWidget{
-  @override
+
   final String id;
   final String title;
   final List<String> items;
